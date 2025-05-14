@@ -1,6 +1,6 @@
 <svelte:head>
-	<title>About</title>
-	<meta name="description" content="About this app" />
+	<title>About • Snek</title>
+	<meta name="description" content="About Snek" />
 </svelte:head>
 
 <div style="max-width: 60ch">
@@ -8,7 +8,7 @@
 
 	<p>
 		This is a self-contained app built with <a href="https://svelte.dev/docs/kit">SvelteKit</a>.
-		Everything, including the images and music, is embedded in the .html file — you can save it to
+		Everything, including the images and audio, is embedded in the .html file — you can save it to
 		disk and run it just by double-clicking on it.
 	</p>
 
