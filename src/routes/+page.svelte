@@ -150,6 +150,14 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Snek</title>
+	<meta
+		name="description"
+		content="Snek, a self-contained downloadable game built with SvelteKit"
+	/>
+</svelte:head>
+
 <svelte:window onkeydown={handleKeydown} onpointerdown={handlePointerdown} />
 
 <div class="game-container">
