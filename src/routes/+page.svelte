@@ -83,7 +83,6 @@
 			return;
 		}
 
-		// Get new current position from Buffer
 		direction = directionBuffer.shift() ?? direction;
 
 		const head = snake[0];
