@@ -1,22 +1,26 @@
 <script lang="ts">
-	import gameover from '$lib/audio/gameover.wav';
-	import powerup from '$lib/audio/powerup.wav';
 	import snek from '$lib/images/snek.png';
+	import powerup from '$lib/audio/powerup.wav';
+	import gameover from '$lib/audio/gameover.wav';
 	import { innerWidth } from 'svelte/reactivity/window';
+
+	type Direction = 'up' | 'down' | 'left' | 'right';
 
 	// Grid size
 	const GRID_SIZE = 20;
 	const CELL_SIZE = $derived(Math.min(20, ((innerWidth.current as number) - 40) / GRID_SIZE));
 
 	// Game state
-	let directionBuffer = $state<('up' | 'down' | 'left' | 'right')[]>([]);
-	let currentDirection = $state<'up' | 'down' | 'left' | 'right'>('right');
-	let lastInputtedDirection = $derived(directionBuffer.at(-1) || currentDirection);
+	let direction = $state<Direction>('right');
+	let directionBuffer = $state<Direction[]>([]);
 	let snake = $state<[number, number][]>([[0, 0]]); // Array of [x, y] coordinates
 	let food = $state<[number, number]>([5, 5]);
 	let score = $state(0);
 	let gameOver = $state(false);
 	let gameLoopInterval = $state<number | null>(null);
+
+	// svelte-ignore state_referenced_locally
+	let lastDirection = direction;
 
 	// Derived values
 	let gameBoard = $derived.by(() => {
@@ -47,7 +51,7 @@
 
 	function resetGame() {
 		snake = [[0, 0]];
-		currentDirection = 'right';
+		direction = 'right';
 		directionBuffer = [];
 		score = 0;
 		gameOver = false;
@@ -63,6 +67,13 @@
 		food = newFood;
 	}
 
+	function pushDirection(newDirection: Direction) {
+		if (newDirection !== lastDirection) {
+			directionBuffer.push(newDirection);
+			lastDirection = newDirection;
+		}
+	}
+
 	function gameLoop() {
 		if (gameOver) {
 			if (gameLoopInterval) {
@@ -73,13 +84,13 @@
 		}
 
 		// Get new current position from Buffer
-		currentDirection = directionBuffer.shift() || currentDirection;
+		direction = directionBuffer.shift() ?? direction;
 
 		const head = snake[0];
 		let newHead: [number, number];
 
 		// Calculate new head position
-		switch (currentDirection) {
+		switch (direction) {
 			case 'up':
 				newHead = [head[0], head[1] - 1];
 				break;
@@ -122,16 +133,16 @@
 	function handleKeydown(event: KeyboardEvent) {
 		switch (event.key) {
 			case 'ArrowUp':
-				if (lastInputtedDirection !== 'down') directionBuffer.push('up');
+				pushDirection('up');
 				break;
 			case 'ArrowDown':
-				if (lastInputtedDirection !== 'up') directionBuffer.push('down');
+				pushDirection('down');
 				break;
 			case 'ArrowLeft':
-				if (lastInputtedDirection !== 'right') directionBuffer.push('left');
+				pushDirection('left');
 				break;
 			case 'ArrowRight':
-				if (lastInputtedDirection !== 'left') directionBuffer.push('right');
+				pushDirection('right');
 				break;
 		}
 	}
@@ -141,17 +152,9 @@
 		let y = event.clientY / window.innerHeight - 0.5;
 
 		if (Math.abs(x) > Math.abs(y)) {
-			if (x > 0) {
-				if (lastInputtedDirection !== 'left') directionBuffer.push('right');
-			} else {
-				if (lastInputtedDirection !== 'right') directionBuffer.push('left');
-			}
+			pushDirection(x > 0 ? 'right' : 'left');
 		} else {
-			if (y > 0) {
-				if (lastInputtedDirection !== 'up') directionBuffer.push('down');
-			} else {
-				if (lastInputtedDirection !== 'down') directionBuffer.push('up');
-			}
+			pushDirection(y > 0 ? 'down' : 'up');
 		}
 	}
 </script>
