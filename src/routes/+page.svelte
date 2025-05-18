@@ -4,17 +4,23 @@
 	import gameover from '$lib/audio/gameover.wav';
 	import { innerWidth } from 'svelte/reactivity/window';
 
+	type Direction = 'up' | 'down' | 'left' | 'right';
+
 	// Grid size
 	const GRID_SIZE = 20;
 	const CELL_SIZE = $derived(Math.min(20, ((innerWidth.current as number) - 40) / GRID_SIZE));
 
 	// Game state
-	let direction = $state<'up' | 'down' | 'left' | 'right'>('right');
-	let snake = $state([[0, 0]]); // Array of [x, y] coordinates
+	let direction = $state<Direction>('right');
+	let directionBuffer = $state<Direction[]>([]);
+	let snake = $state<[number, number][]>([[0, 0]]); // Array of [x, y] coordinates
 	let food = $state<[number, number]>([5, 5]);
 	let score = $state(0);
 	let gameOver = $state(false);
 	let gameLoopInterval = $state<number | null>(null);
+
+	// svelte-ignore state_referenced_locally
+	let lastDirection = direction;
 
 	// Derived values
 	let gameBoard = $derived.by(() => {
@@ -46,6 +52,7 @@
 	function resetGame() {
 		snake = [[0, 0]];
 		direction = 'right';
+		directionBuffer = [];
 		score = 0;
 		gameOver = false;
 		placeFood();
@@ -60,6 +67,13 @@
 		food = newFood;
 	}
 
+	function pushDirection(newDirection: Direction) {
+		if (newDirection !== lastDirection) {
+			directionBuffer.push(newDirection);
+			lastDirection = newDirection;
+		}
+	}
+
 	function gameLoop() {
 		if (gameOver) {
 			if (gameLoopInterval) {
@@ -68,6 +82,8 @@
 			}
 			return;
 		}
+
+		direction = directionBuffer.shift() ?? direction;
 
 		const head = snake[0];
 		let newHead: [number, number];
@@ -116,16 +132,16 @@
 	function handleKeydown(event: KeyboardEvent) {
 		switch (event.key) {
 			case 'ArrowUp':
-				if (direction !== 'down') direction = 'up';
+				pushDirection('up');
 				break;
 			case 'ArrowDown':
-				if (direction !== 'up') direction = 'down';
+				pushDirection('down');
 				break;
 			case 'ArrowLeft':
-				if (direction !== 'right') direction = 'left';
+				pushDirection('left');
 				break;
 			case 'ArrowRight':
-				if (direction !== 'left') direction = 'right';
+				pushDirection('right');
 				break;
 		}
 	}
@@ -135,17 +151,9 @@
 		let y = event.clientY / window.innerHeight - 0.5;
 
 		if (Math.abs(x) > Math.abs(y)) {
-			if (x > 0) {
-				if (direction !== 'left') direction = 'right';
-			} else {
-				if (direction !== 'right') direction = 'left';
-			}
+			pushDirection(x > 0 ? 'right' : 'left');
 		} else {
-			if (y > 0) {
-				if (direction !== 'up') direction = 'down';
-			} else {
-				if (direction !== 'down') direction = 'up';
-			}
+			pushDirection(y > 0 ? 'down' : 'up');
 		}
 	}
 </script>
