@@ -3,6 +3,36 @@
 :root {
 	font-family: 'VT323', monospace;
 	font-size: 24px;
+
+	--bg-start: hsl(48, 100%, 95%);
+	--bg-end: hsl(48, 100%, 90%);
+	--text-color: #000;
+	--button-bg: #4caf50;
+	--button-text: white;
+	--button-hover: #45a049;
+
+	--board-bg: #f0f0f0;
+	--board-border: #333;
+	--snake-bg: #4caf50;
+	--food-bg: #ff5722;
+	--game-over-bg: rgba(255, 255, 255, 0.9);
+	--game-over-text: #000;
+}
+
+[data-theme='dark'] {
+	--bg-start: hsl(222, 47%, 11%);
+	--bg-end: hsl(222, 47%, 21%);
+	--text-color: #fff;
+	--button-bg: #666;
+	--button-text: white;
+	--button-hover: #555;
+
+	--board-bg: #444;
+	--board-border: #ccc;
+	--snake-bg: #8bc34a;
+	--food-bg: #ff9800;
+	--game-over-bg: rgba(0, 0, 0, 0.8);
+	--game-over-text: #fff;
 }
 
 * {
@@ -15,7 +45,8 @@ body {
 	margin: 0;
 	background-attachment: fixed;
 	background-size: 100vw 100vh;
-	background-image: radial-gradient(50% 50% at 50% 50%, hsl(48, 100%, 95%), hsl(48, 100%, 90%));
+	background-image: radial-gradient(50% 50% at 50% 50%, var(--bg-start), var(--bg-end));
+	color: var(--text-color);
 }
 
 a {
@@ -25,4 +56,14 @@ a {
 button {
 	font-size: inherit;
 	font-family: inherit;
+	background-color: var(--button-bg);
+	color: var(--button-text);
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 10px 20px;
+}
+
+button:hover {
+	background-color: var(--button-hover);
 }
