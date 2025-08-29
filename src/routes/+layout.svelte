@@ -2,30 +2,41 @@
 	import { page } from '$app/state';
 	import favicon from '$lib/images/favicon.png';
 	import '../app.css';
+	import { theme } from '$lib/stores';
 
 	let { children } = $props();
+
+	function toggleTheme() {
+		theme.update((current) => (current === 'light' ? 'dark' : 'light'));
+	}
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="app">
-	<nav>
-		<!-- svelte-ignore a11y_invalid_attribute it's valid in this context -->
-		<a href="" aria-current={page.route.id === '/'}>home</a>
-		<a href="#/about" aria-current={page.route.id === '/about'}>about</a>
+<body data-theme={$theme}>
+	<div class="app">
+		<nav>
+			<!-- svelte-ignore a11y_invalid_attribute it's valid in this context -->
+			<a href="" aria-current={page.route.id === '/'}>home</a>
+			<a href="#/about" aria-current={page.route.id === '/about'}>about</a>
 
-		{#if page.url.protocol !== 'file:'}
-			<!-- svelte-ignore a11y_invalid_attribute -->
-			<a href="" download="snek.html">download this game</a>
-		{/if}
-	</nav>
+			{#if page.url.protocol !== 'file:'}
+				<!-- svelte-ignore a11y_invalid_attribute -->
+				<a href="" download="snek.html">download this game</a>
+			{/if}
 
-	<main>
-		{@render children()}
-	</main>
-</div>
+			<button onclick={toggleTheme}>
+				{$theme === 'light' ? 'dark' : 'light'} mode
+			</button>
+		</nav>
+
+		<main>
+			{@render children()}
+		</main>
+	</div>
+</body>
 
 <style>
 	.app {

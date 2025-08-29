@@ -257,8 +257,8 @@
 		position: relative;
 		width: 100%;
 		height: 100%;
-		background-color: #f0f0f0;
-		border: 2px solid #333;
+		background-color: var(--board-bg);
+		border: 2px solid var(--board-border);
 	}
 
 	.cell {
@@ -267,12 +267,12 @@
 	}
 
 	.cell.snake {
-		background-color: #4caf50;
+		background-color: var(--snake-bg);
 		border-radius: 4px;
 	}
 
 	.cell.food {
-		background-color: #ff5722;
+		background-color: var(--food-bg);
 		border-radius: 50%;
 	}
 
@@ -281,24 +281,18 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		background-color: rgba(255, 255, 255, 0.9);
+		background-color: var(--game-over-bg);
 		padding: 20px;
 		border-radius: 8px;
 		text-align: center;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-		color: black;
+		color: var(--game-over-text);
 	}
 
-	button {
+	.start-button {
 		padding: 10px 20px;
-		background-color: #4caf50;
-		color: white;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
-	}
-
-	button:hover {
-		background-color: #45a049;
 	}
 </style>
